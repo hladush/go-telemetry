@@ -1,0 +1,19 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Output of the go coverage tool
+*.coverprofile
+
+# Dependency directories (may be safely ignored)
+vendor/
+
+# IDE/tools
+.idea/
+.vscode/
+*.swp
