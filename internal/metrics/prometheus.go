@@ -15,6 +15,9 @@ type PrometheusMetrics struct {
 
 	summaryByName map[string]prometheus.Summary
 	summaryRWMux  sync.RWMutex
+	
+	gaugeByName   map[string]prometheus.Gauge
+	gaugeRWMux    sync.RWMutex
 }
 
 func NewPrometheusMetrics(address string) *PrometheusMetrics {
@@ -33,6 +36,9 @@ func NewPrometheusMetrics(address string) *PrometheusMetrics {
 
 		summaryByName: make(map[string]prometheus.Summary),
 		summaryRWMux:  sync.RWMutex{},
+
+		gaugeByName:   make(map[string]prometheus.Gauge),
+		gaugeRWMux:    sync.RWMutex{},
 	}
 }
 
@@ -71,6 +77,31 @@ func (p *PrometheusMetrics) createSummaryIfDoesntExist(metric string) {
 	})
 	p.summaryByName[metric] = summary
 	prometheus.MustRegister(summary)
+}
+
+func (p *PrometheusMetrics) SetGauge(metric string, value float64) {
+	p.createGaugeIfDoesntExist(metric)
+	p.gaugeByName[metric].Set(value)
+}
+
+func (p *PrometheusMetrics) createGaugeIfDoesntExist(metric string) {
+	p.gaugeRWMux.RLock()
+	_, exists := p.gaugeByName[metric]
+	p.gaugeRWMux.RUnlock()
+	if exists {
+		return
+	}
+
+	p.gaugeRWMux.Lock()
+	defer p.gaugeRWMux.Unlock()
+	if _, exists := p.gaugeByName[metric]; exists {
+		return
+	}
+	gauge := prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: metric,
+	})
+	p.gaugeByName[metric] = gauge
+	prometheus.MustRegister(gauge)
 }
 
 func (p *PrometheusMetrics) createCounterIfDoesntExist(metric string) {

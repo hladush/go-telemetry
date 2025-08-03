@@ -26,7 +26,7 @@ const (
 
 var (
 	metricsPrefix  = ""
-	metricsEmitter MetricsEmiter
+	metricsEmitter MetricsEmitter
 	logger         Logger
 )
 

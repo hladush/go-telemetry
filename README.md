@@ -25,7 +25,7 @@ go get github.com/hladush/go-telemetry
 ### 🧩 Environment Variables
 | Variable             | Description                                                                   | Default   |
 | -------------------- | ----------------------------------------------------------------------------- | --------- |
-| `METRICS_PROVIDER`   | Backend for metrics:`noop`, `prometheus` or `console`                         | `console` |
+| `METRICS_EMITTER`    | Backend for metrics:`noop`, `prometheus` or `console`                         | `console` |
 | `PROMETHEUS_ADDRESS` | Address to expose Prometheus metrics endpoint (used by `http.ListenAndServe`) | `:8081`   |
 
 
