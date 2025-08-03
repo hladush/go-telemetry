@@ -1,18 +1,17 @@
 package log
 
 import (
-	"fmt"
-	"os"
+	"log"
 )
 
 type ConsoleLogger struct{}
 
 func (c *ConsoleLogger) LogInfo(message string) {
-	fmt.Println("INFO:", message)
+	log.Println("INFO:", message)
 }
 func (c *ConsoleLogger) LogDebug(message string) {
-	fmt.Println("DEBUG:", message)
+	log.Println("DEBUG:", message)
 }
 func (c *ConsoleLogger) LogError(message string) {
-	fmt.Fprintln(os.Stderr, "ERROR:", message)
+	log.Println("ERROR:", message)
 }

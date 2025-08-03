@@ -16,9 +16,10 @@ type Method struct {
 	latencyPrefix string
 }
 
-type MetricsEmiter interface {
+type MetricsEmitter interface {
 	IncCounter(metric string)
 	Observe(metric string, value float64)
+	SetGauge(metric string, value float64)
 }
 
 type Logger interface {
@@ -83,6 +84,11 @@ func (m *Method) CountSuccess(dimension ...string) {
 func (m *Method) IncCounter(dimension ...string) {
 	metric := utils.JoinWithPrefix(m.metricsPrefix, dimension...)
 	metricsEmitter.IncCounter(metric)
+}
+
+func (m *Method) SetGauge(value float64, dimension ...string) {
+	metric := utils.JoinWithPrefix(m.metricsPrefix, dimension...)
+	metricsEmitter.SetGauge(metric, value)
 }
 
 func getMetricsName(methodName, serviceName string) string {
