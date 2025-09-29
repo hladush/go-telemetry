@@ -11,8 +11,8 @@ import (
 
 const (
 	logFmt           = "[%s.%s]"
-	metricsFmt       = "%s.%s"
-	metricsPrefixFmt = "%s.%s.%s"
+	metricsFmt       = "%s_%s"
+	metricsPrefixFmt = "%s_%s_%s"
 
 	metricsPrefixEnv = "METRICS_PREFIX"
 	metricsDefault   = "go_app_telemetry"
