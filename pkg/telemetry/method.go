@@ -34,10 +34,10 @@ func NewMethod(methodName, serviceName string) *Method {
 	return &Method{
 		logName:       fmt.Sprintf(logFmt, serviceName, methodName),
 		metricsPrefix: getMetricsName(methodName, serviceName),
-		errorPrefix:   getMetricsName(fmt.Sprintf("%s.error", snakeCaseMethodName), snakeCaseServiceName),
-		successPrefix: getMetricsName(fmt.Sprintf("%s.success", snakeCaseMethodName), snakeCaseServiceName),
-		requestPrefix: getMetricsName(fmt.Sprintf("%s.request", snakeCaseMethodName), snakeCaseServiceName),
-		latencyPrefix: getMetricsName(fmt.Sprintf("%s.latency", snakeCaseMethodName), snakeCaseServiceName),
+		errorPrefix:   getMetricsName(fmt.Sprintf("%s_error", snakeCaseMethodName), snakeCaseServiceName),
+		successPrefix: getMetricsName(fmt.Sprintf("%s_success", snakeCaseMethodName), snakeCaseServiceName),
+		requestPrefix: getMetricsName(fmt.Sprintf("%s_request", snakeCaseMethodName), snakeCaseServiceName),
+		latencyPrefix: getMetricsName(fmt.Sprintf("%s_latency", snakeCaseMethodName), snakeCaseServiceName),
 	}
 }
 
@@ -93,7 +93,7 @@ func (m *Method) SetGauge(value float64, dimension ...string) {
 
 func getMetricsName(methodName, serviceName string) string {
 	if metricsPrefix == "" {
-		return fmt.Sprintf("%s.%s", utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
+		return fmt.Sprintf(metricsFmt, utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
 	}
 
 	return fmt.Sprintf(metricsPrefixFmt, metricsPrefix, utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
