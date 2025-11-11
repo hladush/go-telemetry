@@ -2,6 +2,7 @@ package telemetry
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hladush/go-telemetry/internal/utils"
@@ -17,6 +18,9 @@ type Method struct {
 }
 
 type MetricsEmitter interface {
+	// returns the separator used in metrics names
+	// for example, "." or "_"
+	Separator() string
 	IncCounter(metric string)
 	Observe(metric string, value float64)
 	SetGauge(metric string, value float64)
@@ -42,7 +46,7 @@ func NewMethod(methodName, serviceName string) *Method {
 }
 
 func (m *Method) RecordLatency(startTime time.Time, dimension ...string) {
-	metric := utils.JoinWithPrefix(m.latencyPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.latencyPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.Observe(metric, float64(time.Since(startTime).Milliseconds()))
 }
 
@@ -67,34 +71,36 @@ func (m *Method) LogAndCountError(err error, dimension ...string) {
 }
 
 func (m *Method) CountRequest(dimension ...string) {
-	metric := utils.JoinWithPrefix(m.requestPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.requestPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.IncCounter(metric)
 }
 
 func (m *Method) CountError(dimension ...string) {
-	metric := utils.JoinWithPrefix(m.errorPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.errorPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.IncCounter(metric)
 }
 
 func (m *Method) CountSuccess(dimension ...string) {
-	metric := utils.JoinWithPrefix(m.successPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.successPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.IncCounter(metric)
 }
 
 func (m *Method) IncCounter(dimension ...string) {
-	metric := utils.JoinWithPrefix(m.metricsPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.metricsPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.IncCounter(metric)
 }
 
 func (m *Method) SetGauge(value float64, dimension ...string) {
-	metric := utils.JoinWithPrefix(m.metricsPrefix, dimension...)
+	metric := utils.JoinWithPrefix(m.metricsPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.SetGauge(metric, value)
 }
 
 func getMetricsName(methodName, serviceName string) string {
+	var metricName string
 	if metricsPrefix == "" {
-		return fmt.Sprintf("%s.%s", utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
+		metricName = fmt.Sprintf("%s.%s", utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
+	} else {
+		metricName = fmt.Sprintf(metricsPrefixFmt, metricsPrefix, utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
 	}
-
-	return fmt.Sprintf(metricsPrefixFmt, metricsPrefix, utils.ToSnakeCase(serviceName), utils.ToSnakeCase(methodName))
+	return strings.ReplaceAll(metricName, ".", metricsEmitter.Separator())
 }

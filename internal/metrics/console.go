@@ -6,6 +6,9 @@ import (
 
 type ConsoleMetrics struct{}
 
+func (c *ConsoleMetrics) Separator() string {
+	return "_"
+}
 func (c *ConsoleMetrics) IncCounter(metric string) {
 	fmt.Printf("Metric: %s, Value: %d\n", metric, 1)
 }

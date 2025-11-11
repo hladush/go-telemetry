@@ -42,6 +42,9 @@ func NewPrometheusMetrics(address string) *PrometheusMetrics {
 	}
 }
 
+func (p *PrometheusMetrics) Separator() string {
+	return "_"
+}
 func (p *PrometheusMetrics) IncCounter(metric string) {
 	p.createCounterIfDoesntExist(metric)
 	p.counterByName[metric].Inc()
