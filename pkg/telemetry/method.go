@@ -18,7 +18,7 @@ type Method struct {
 }
 
 type MetricsEmitter interface {
-	// returns the separator used in metrics names
+	// Separator returns the separator used in metrics names
 	// for example, "." or "_"
 	Separator() string
 	IncCounter(metric string)
