@@ -15,6 +15,6 @@ func ToSnakeCase(input string) string {
 }
 
 
-func JoinWithPrefix(prefix string, parts ...string) string {
-    return strings.Join(append([]string{prefix}, parts...), ".")
+func JoinWithPrefix(prefix string, separator string, parts ...string) string {
+    return strings.Join(append([]string{prefix}, parts...), separator)
 }
