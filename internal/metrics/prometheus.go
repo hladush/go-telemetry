@@ -15,9 +15,9 @@ type PrometheusMetrics struct {
 
 	summaryByName map[string]prometheus.Summary
 	summaryRWMux  sync.RWMutex
-	
-	gaugeByName   map[string]prometheus.Gauge
-	gaugeRWMux    sync.RWMutex
+
+	gaugeByName map[string]prometheus.Gauge
+	gaugeRWMux  sync.RWMutex
 }
 
 func NewPrometheusMetrics(address string) *PrometheusMetrics {
@@ -37,18 +37,24 @@ func NewPrometheusMetrics(address string) *PrometheusMetrics {
 		summaryByName: make(map[string]prometheus.Summary),
 		summaryRWMux:  sync.RWMutex{},
 
-		gaugeByName:   make(map[string]prometheus.Gauge),
-		gaugeRWMux:    sync.RWMutex{},
+		gaugeByName: make(map[string]prometheus.Gauge),
+		gaugeRWMux:  sync.RWMutex{},
 	}
 }
 
 func (p *PrometheusMetrics) Separator() string {
 	return "_"
 }
+
 func (p *PrometheusMetrics) IncCounter(metric string) {
 	p.createCounterIfDoesntExist(metric)
 	p.counterByName[metric].Inc()
 
+}
+
+func (p *PrometheusMetrics) IncCounterBy(metric string, value float64) {
+	p.createCounterIfDoesntExist(metric)
+	p.counterByName[metric].Add(value)
 }
 
 func (p *PrometheusMetrics) Observe(metric string, value float64) {

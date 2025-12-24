@@ -22,6 +22,7 @@ type MetricsEmitter interface {
 	// for example, "." or "_"
 	Separator() string
 	IncCounter(metric string)
+	IncCounterBy(metric string, value float64)
 	Observe(metric string, value float64)
 	SetGauge(metric string, value float64)
 }
@@ -54,10 +55,8 @@ func (m *Method) LogAndCountErrorOrSuccess(err error, dimension ...string) {
 	if err != nil {
 		m.LogAndCountError(err, dimension...)
 		return
-
 	}
 	m.LogAndCountSuccess(dimension...)
-
 }
 
 func (m *Method) LogAndCountSuccess(dimension ...string) {
@@ -88,6 +87,14 @@ func (m *Method) CountSuccess(dimension ...string) {
 func (m *Method) IncCounter(dimension ...string) {
 	metric := utils.JoinWithPrefix(m.metricsPrefix, metricsEmitter.Separator(), dimension...)
 	metricsEmitter.IncCounter(metric)
+}
+
+func (m *Method) IncCounterBy(value float64, dimension ...string) {
+	metric := utils.JoinWithPrefix(m.metricsPrefix, metricsEmitter.Separator(), dimension...)
+	if value <= 0 {
+		return
+	}
+	metricsEmitter.IncCounterBy(metric, value)
 }
 
 func (m *Method) SetGauge(value float64, dimension ...string) {
