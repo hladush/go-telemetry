@@ -9,8 +9,13 @@ type ConsoleMetrics struct{}
 func (c *ConsoleMetrics) Separator() string {
 	return "_"
 }
+
 func (c *ConsoleMetrics) IncCounter(metric string) {
 	fmt.Printf("Metric: %s, Value: %d\n", metric, 1)
+}
+
+func (c *ConsoleMetrics) IncCounterBy(metric string, value float64) {
+	fmt.Printf("Metric: %s, Value: %f\n", metric, value)
 }
 
 func (c *ConsoleMetrics) Observe(metric string, value float64) {
