@@ -55,10 +55,8 @@ func (m *Method) LogAndCountErrorOrSuccess(err error, dimension ...string) {
 	if err != nil {
 		m.LogAndCountError(err, dimension...)
 		return
-
 	}
 	m.LogAndCountSuccess(dimension...)
-
 }
 
 func (m *Method) LogAndCountSuccess(dimension ...string) {
@@ -93,6 +91,9 @@ func (m *Method) IncCounter(dimension ...string) {
 
 func (m *Method) IncCounterBy(value float64, dimension ...string) {
 	metric := utils.JoinWithPrefix(m.metricsPrefix, metricsEmitter.Separator(), dimension...)
+	if value <= 0 {
+		return
+	}
 	metricsEmitter.IncCounterBy(metric, value)
 }
 
